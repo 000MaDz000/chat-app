@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon -e ts --watch ./server .env --exec \"ts-node ./src/server/index.ts\"",
+    "dev": "nodemon -e ts --watch ./src/server/*.ts .env --exec \"ts-node ./src/server/index.ts\"",
     "build": "next build",
     "start": "cross-env NODE_ENV=production ts-node ./src/server/index.ts",
     "lint": "next lint"
