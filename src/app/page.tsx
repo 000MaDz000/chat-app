@@ -1,4 +1,5 @@
-import Image from 'next/image'
+import Image from 'next/image';
+import "@/app/_api/socket-connection";
 
 export default function Home() {
   return (
