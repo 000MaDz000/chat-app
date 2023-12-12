@@ -1,6 +1,6 @@
 export default function SignupForm() {
     return (
-        <form className={"flex flex-col gap-4 shadow-lg p-3 w-1/3 min-w-max"}>
+        <form className={"flex flex-col gap-4 shadow-lg p-3 w-full m-3 md:w-1/2 lg:w-1/3"}>
             <h1 className="font-bold text-green-500 text-xl">create an account</h1>
             <input type="text" name="firstname" placeholder="firstname" title="firstname" className={"bg-slate-50 p-2 outline-none focus:bg-slate-100 transition-colors"} />
             <input type="text" name="lastname" placeholder="lastname" title="lastname" className={"bg-slate-50 p-2 outline-none focus:bg-slate-100 transition-colors"} />
