@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation"
-import ChatMessagesTemplate from "../_ui/chat-messages-template";
+import ChatMessagesTemplate from "../../_ui/chat-messages-template";
 
 export default function RoomPage({ params: { roomname } }: { params: { roomname: string } }) {
     console.log(roomname);

@@ -1,3 +1,4 @@
+import Modal from "./modal"
 import RoomsSideBar from "./rooms-side-bar"
 
 export default function MainTemplate({ children, }: { children: React.ReactNode }) {
