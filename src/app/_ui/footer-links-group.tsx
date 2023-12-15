@@ -1,8 +1,12 @@
 import { HTMLAttributes, PropsWithChildren } from "react";
 
-export default function FooterLinksItem(props: PropsWithChildren<{ titleText: string } & HTMLAttributes<HTMLDivElement>>) {
+type FooterLinksItemProps = PropsWithChildren<{ titleText: string } & HTMLAttributes<HTMLDivElement>>;
+export default function FooterLinksItem(props: FooterLinksItemProps) {
+    const divAttr: Partial<FooterLinksItemProps> = { ...props };
+    delete divAttr.titleText;
+
     return (
-        <div {...props} className={"flex flex-col gap-2 text-center footer-links-group " + props.className}>
+        <div {...divAttr} className={"flex flex-col gap-2 text-center footer-links-group " + props.className}>
             <div>
                 <h1 className="text-xl">{props.titleText}</h1>
             </div>
