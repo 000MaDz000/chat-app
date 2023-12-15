@@ -7,6 +7,7 @@ export default function () {
             <h1 className="font-bold text-lg text-lime-400">Login To Chat</h1>
             <input name="email" type="text" className="p-3 bg-slate-300 focus:bg-slate-200 rounded-sm text-stone-900 outline-none" placeholder="email" autoFocus />
             <input name="password" type="password" className="p-3 bg-slate-300 focus:bg-slate-200 rounded-sm text-stone-900 outline-none" placeholder="password" />
+            <input type="submit" className="p-3 cursor-pointer bg-sky-600 hover:bg-sky-500 rounded-sm text-stone-900 outline-none" value={"login"} />
             <Link href="/recover" className="underline font-semibold text-blue-800 hover:text-sky-900 transition">forgot your password?</Link>
             <Link href="/signup" className="underline font-semibold text-blue-800 hover:text-sky-900 transition">don't have account?</Link>
         </form>
