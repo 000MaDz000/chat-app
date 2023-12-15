@@ -7,17 +7,22 @@ export const metadata: Metadata = {
   description: 'a basic chat app',
 }
 
-export default function RootLayout({
-  children,
-  modal
-}: {
+type RootProps = {
   children: React.ReactNode
-  modal: React.ReactNode
-}) {
+  auth: React.ReactNode,
+  params: { [key: string]: string };
+};
+
+
+export default function RootLayout(props: RootProps) {
+  const { children, auth } = props;
 
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        {auth}
+      </body>
     </html>
   )
 }
