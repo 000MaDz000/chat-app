@@ -59,6 +59,19 @@ export class UserAccess {
         if (userData.code && userData.codeExpireTime && userData.codeExpireTime.getTime() - Date.now() > 0) return false;
         return true;
     }
+    static async getUser(queryObject: { email?: string, nickname?: string, _id?: ObjectId }) {
+
+        if (queryObject._id) {
+            return await users.findOne({ _id: queryObject._id });
+        }
+        else if (queryObject.email) {
+            return await users.findOne({ email: queryObject.email });
+        }
+        else if (queryObject.nickname) {
+            return await users.findOne({ nickname: queryObject.email });
+        }
+        throw "query is required";
+    }
 
     constructor(public userId: ObjectId) { }
 
