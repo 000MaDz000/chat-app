@@ -49,21 +49,47 @@ export class RoomAccess {
     }
 
     constructor(public roomId: ObjectId) { }
-    async getMessages(dayBack: number = 1) {
+    async getMessages() {
         try {
-            if (dayBack <= 0) dayBack = 1;
-            else dayBack++;
-            const oneDayMilliSeconds = 1000 * 60 * 60 * 24;
-            const dateStart = new Date(Date.now() - (dayBack * oneDayMilliSeconds));
-            const dateStop = new Date(dateStart.getTime() + oneDayMilliSeconds);
 
-            return await messages.find({
-                roomId: this.roomId,
-                creationDate: {
-                    $gt: dateStart,
-                    $lt: dateStop,
-                }
-            }).toArray();
+            const cursor = messages.aggregate<MessageData>([
+                {
+                    $match: {
+                        roomId: this.roomId,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "senderId",
+                        foreignField: "_id",
+                        as: "sender"
+                    }
+                },
+                {
+                    $project: {
+                        body: 1,
+                        creationDate: 1,
+                        roomId: 1,
+                        _id: 1,
+                        sender: {
+                            $arrayElemAt: ["$sender", 0],
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        body: 1,
+                        creationDate: 1,
+                        roomId: 1,
+                        _id: 1,
+                        "sender.nickname": 1,
+                        "sender._id": 1
+                    }
+                },
+            ]);
+
+            return await cursor.toArray();
         }
         catch (err) {
             throw err;
@@ -102,4 +128,4 @@ export class RoomAccess {
 //     }).then(console.log).catch(console.log);
 // }
 
-// r.getMessages(1).then(console.log).catch(console.log);
+// r.getMessages(0).then(console.log).catch(console.log);
