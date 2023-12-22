@@ -15,13 +15,12 @@ type RootProps = {
 
 
 export default function RootLayout(props: RootProps) {
-  const { children, auth } = props;
+  const { children } = props;
 
   return (
     <html lang="en">
       <body>
         {children}
-        {auth}
       </body>
     </html>
   )

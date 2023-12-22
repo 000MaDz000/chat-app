@@ -1,140 +1,87 @@
-import { ObjectId, WithId } from "mongodb";
-import { UserData, users } from "./connection";
+import { UserData } from "@/models/connection";
+import { users } from "./connection";
+import { WithId } from "mongodb";
 import sendMail from "../utils/send-mail";
 
-
-export class User {
-    constructor(public data: UserData) { }
-    async check() {
-        const user = await users.findOne({ nickname: this.data.nickname });
-        if (user) throw "this nickname is used";
-        const userWEmail = await users.findOne({ email: this.data.email });
-        if (userWEmail) throw "this email is used";
+const allowedCharacters = "a1b0c2d3e4f5g6h7i8j9kmnopqrstuvwxyz"
+export default class User {
+    constructor(public email: string) {
+        this.build();
     }
 
-    async save() {
-        try {
-            const check = await this.check();
-            const userData = {
-                email: this.data.email,
-                nickname: this.data.nickname,
-                code: VerificationCode.generate(8),
-                codeExpireTime: new Date(Date.now() + (1000 * 60 * 60)), // one hour
-            }
-
-            sendMail(userData.email, {
-                html: `<h1>hello ${userData.nickname}</h1><h1>your verification code is ${userData.code}</h1>`,
-            });
-
-            const user = await users.insertOne(userData);
-
-
-            return {
-                _id: user.insertedId,
-                ...userData,
-            }
-        }
-        catch (err) {
-            throw err;
-        }
+    async getUserObject() {
+        return await users.findOne({ email: this.email });
     }
-}
 
-const availableInCode = "a1b2c3d4e5f6g7h8i9gkmnopqrstuvwxyz";
+    private async build() {
+        const userObject = await this.getUserObject();
+        if (userObject && userObject.nickname) return;
 
-export class VerificationCode {
-    static generate(length = 8) {
+        const emailName = this.email.slice(0, this.email.indexOf("@"));
+        await this.setNickname(emailName);
+    }
+
+    async setNickname(nickname: string) {
+        const isNicknameUsed = await users.findOne({ nickname });
+        if (isNicknameUsed) {
+            return "the nickname is used";
+        }
+
+        await users.updateOne({
+            email: this.email,
+        }, {
+            $set: {
+                nickname,
+            }
+        }, { upsert: true });
+    }
+
+    async generateCode() {
         let code = "";
-
-        for (let i = 0; i < length; i++) {
-            code += availableInCode[Math.floor(Math.random() * availableInCode.length)];
+        let codeExpireTime = new Date(Date.now() + 1000 * 60 * 60 * 2);
+        for (let i = 0; i < 8; i++) {
+            code += allowedCharacters[Math.floor(Math.random() * allowedCharacters.length)];
         }
 
-        return code;
-    }
-}
-
-export class UserAccess {
-    static isCodeExpired(userData: UserData) {
-        if (userData.code && userData.codeExpireTime && userData.codeExpireTime.getTime() - Date.now() > 0) return false;
-        return true;
-    }
-    static async getUser(queryObject: { email?: string, nickname?: string, _id?: ObjectId }) {
-
-        if (queryObject._id) {
-            return await users.findOne({ _id: queryObject._id });
-        }
-        else if (queryObject.email) {
-            return await users.findOne({ email: queryObject.email });
-        }
-        else if (queryObject.nickname) {
-            return await users.findOne({ nickname: queryObject.email });
-        }
-        throw "query is required";
-    }
-
-    constructor(public userId: ObjectId) { }
-
-    async createNewCode() {
-        const code = VerificationCode.generate();
-        const up = await users.updateOne({ _id: this.userId }, {
+        await users.updateOne({
+            email: this.email,
+        }, {
             $set: {
                 code,
-                codeExpireTime: new Date(Date.now() + (1000 * 60 * 60)),
+                codeExpireTime: new Date(Date.now() + 1000 * 60 * 60 * 2),
             }
+        }, { upsert: true });
+
+        return {
+            code,
+            codeExpireTime,
+        };
+    }
+
+    async getCode() {
+        const user = await users.findOne({ email: this.email }) as WithId<UserData>;
+        const expireTime = user?.codeExpireTime as Date;
+
+        if (!user || expireTime.getTime() - Date.now() <= 0) {
+            return await this.generateCode();
+        }
+
+        return {
+            code: user.code as string,
+            codeExpireTime: user.codeExpireTime as Date,
+        }
+    }
+
+    async sendCode() {
+        const { code } = await this.getCode();
+        await sendMail(this.email, {
+            html: `<h1>hello, your verification code is ${code}</h1>`,
+            subject: "MaDz Chat Verification Code",
         });
-
-        if (!up.modifiedCount) throw "user not found";
-        return code;
+        return true;
     }
 
-
-    async sendCode(userData?: WithId<UserData> | null) {
-
-        if (!userData) {
-            userData = await users.findOne({ _id: this.userId });
-        }
-
-        if (!userData) throw "user not found";
-
-        let code = userData.code as string;
-
-        if (UserAccess.isCodeExpired(userData)) {
-            code = await this.createNewCode();
-        }
-
-
-        sendMail(userData.email, {
-            html: `<h1>hello ${userData.nickname}</h1><h1>your code is ${code}</h1><h1>don't share it with anyone</h1>`,
-        });
-    }
-
-    async isValidCode(code: string) {
-        const user = await users.findOne({ _id: this.userId });
-        if (!user) throw "user not found";
-
-        if (UserAccess.isCodeExpired(user)) {
-            this.sendCode(user);
-            return false;
-        }
-
-        if (code === user.code) {
-            return true;
-        }
-
-        return false;
-    }
-
-    async changeNickname(newNickName: string) {
-        const user = await users.findOne({ nickname: newNickName });
-        if (user) throw "this nick name is used";
-
-        const modify = await users.updateOne({ _id: this.userId }, {
-            $set: {
-                nickname: newNickName
-            }
-        });
-
-        return Boolean(modify.modifiedCount);
-    }
 }
+
+// new User("noname8080noname@gmail.com").sendCode().then((x) => console.log(x, "sended"));
+console.log(new Date("2023-12-21T22:16:18.888Z").getTime() - new Date().getTime());
