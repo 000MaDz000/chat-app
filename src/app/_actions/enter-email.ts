@@ -8,12 +8,11 @@ export default async function enterEmailAction(formData: FormData) {
     const email = formData.get("email")?.toString();
     if (!email) {
         console.log(email);
-
         return "";
     };
 
 
-    const sess = session<{ user: Partial<UserData> }>();
+    const sess = session<{ user: Partial<UserData> }>({ setCookie: true });
 
     sess.data = {
         user: {

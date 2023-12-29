@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export default async function enterCodeAction(formData: FormData) {
     const code = formData.get("code");
-    const sess = session<DefaultSessionData>();
+    const sess = session<DefaultSessionData>({ setCookie: true });
     const email = sess.data?.user?.email;
 
     if (!email || sess.data?.authunticated) {
@@ -24,7 +24,7 @@ export default async function enterCodeAction(formData: FormData) {
         (sess.data as DefaultSessionData).user = await user.getUserObject() as WithId<UserData>;
         sess.save();
         console.log("code is true");
-        redirect("/");
+        redirect("/chat");
     } else {
         console.log(sess.data);
         console.log("code is:", code);
