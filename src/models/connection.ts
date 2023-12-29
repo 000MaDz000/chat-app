@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient, ObjectId, WithId } from "mongodb";
 const mongodb = require("mongodb");
 
 dotenv.config();
@@ -24,6 +24,7 @@ export interface RoomData {
     adminId: ObjectId;
     creationDate: Date;
     password?: string;
+    users?: ObjectId[];
 }
 
 export interface MessageData {
@@ -33,13 +34,23 @@ export interface MessageData {
     creationDate: Date;
 }
 
+export interface FullMessageData {
+    _id: string;
+    body: string;
+    creationData: Date;
+    sender: {
+        nickname: string;
+    }
+}
 export const users = chatDb.collection<UserData>("users");
 export const rooms = chatDb.collection<RoomData>("rooms");
 export const messages = chatDb.collection<MessageData>("messages");
 
 messages.createIndex({ "roomId": 1 });
 
-rooms.createIndex({ "roomname": 1 });
+rooms.createIndex({ "roomname": 1, "users": 1 });
+rooms.createIndex({ "users": 1 });
+rooms.createIndex({ "roomname": 1, "adminId": 1 });
 rooms.createIndex({ "adminId": 1 });
 
 users.createIndex({ nickname: 1 });
