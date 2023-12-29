@@ -68,7 +68,7 @@ export class Room {
         const aggregation = rooms.aggregate<WithId<Omit<Omit<RoomData, "users">, "password">>>([
             {
                 $match: {
-                    users: userId,
+                    users: new ObjectId(userId),
                 }
             },
             {

@@ -12,12 +12,6 @@ if (!process.env.MONGODB_CONNECTION) {
 const client = new mongodb.MongoClient(process.env.MONGODB_CONNECTION) as MongoClient;
 const chatDb = client.db("chatdb");
 
-export interface UserData {
-    nickname: string;
-    email: string;
-    code?: string;
-    codeExpireTime?: Date;
-}
 
 export interface RoomData {
     roomname: string;

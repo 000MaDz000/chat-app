@@ -1,5 +1,5 @@
 type Publisher = {
-    name: string;
+    nickname: string;
 }
 
 export default function ChatMessage({ message, publisher, isCurrentUser }: { isCurrentUser?: boolean, message: string, publisher: Publisher }) {
@@ -11,7 +11,7 @@ export default function ChatMessage({ message, publisher, isCurrentUser }: { isC
 
                 <div className="max-w-fit p-1 flex gap-1" dir="ltr">
                     <img alt="" />
-                    <p>{publisher.name}</p>
+                    <p>{publisher.nickname}</p>
                 </div>
 
                 <div className="max-w-fit" dir="ltr">

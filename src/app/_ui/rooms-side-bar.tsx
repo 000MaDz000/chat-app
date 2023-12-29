@@ -1,8 +1,15 @@
 import Link from "next/link";
 import RoomLink from "./room-link";
 import Modal from "./modal";
+import { Room } from "@/models/room";
+import session, { DefaultSessionData } from "@/utils/session";
+import { ObjectId } from "mongodb";
 
-export default function RoomsSideBar() {
+export default async function RoomsSideBar() {
+    const sess = session<DefaultSessionData>();
+    const id = sess.data?.user._id;
+    let userRooms = await Room.getUserRooms(new ObjectId(id));
+
     return (
         <div className={"bg-gray-50 p-5 flex flex-col gap-3 w-1/5 shadow-md min-w-max sticky top-0 max-h-screen"}>
             <div className="">
@@ -16,6 +23,12 @@ export default function RoomsSideBar() {
                 <p className="text-3xl">+</p>
             </Link>
 
+            <div>
+                {
+                    userRooms.map(r => <RoomLink roomName={r.roomname} key={r._id.toString()} />)
+                }
+            </div>
+            {/* 
             <div className="rooms-links flex flex-col gap-2 font-serif">
                 <RoomLink roomName="rom1" />
                 <RoomLink roomName="rom2" />
@@ -29,7 +42,7 @@ export default function RoomsSideBar() {
                 <RoomLink roomName="rom10" />
                 <RoomLink roomName="rom11" />
 
-            </div>
+            </div> */}
         </div>
     )
 }

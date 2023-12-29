@@ -1,4 +1,3 @@
-import { UserData } from "@/models/connection";
 import { randomUUID } from "crypto";
 import { readFileSync, rmSync, writeFileSync } from "fs";
 import { WithId } from "mongodb";

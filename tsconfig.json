@@ -32,7 +32,8 @@
     // "esm": true,
     "compilerOptions": {
       "module": "NodeNext"
-    }
+    },
+    "files": true
   },
   "include": [
     "next-env.d.ts",
