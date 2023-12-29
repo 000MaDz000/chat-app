@@ -48,12 +48,12 @@ export class Session<T> {
 }
 
 
-export default function session<T>() {
+export default function session<T>(options?: { setCookie?: boolean }) {
     const cookie = cookies();
     const sid = cookie.get("connection")?.value || "";
     const session = Session.get<T>(sid) || new Session(null);
 
-    if (!sid) {
+    if (!sid && options?.setCookie) {
         cookie.set("connection", session.id, { "path": "/" });
     }
 
