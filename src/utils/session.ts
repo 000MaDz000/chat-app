@@ -52,7 +52,7 @@ export default function session<T>(options?: { setCookie?: boolean }) {
     const sid = cookie.get("connection")?.value || "";
     const session = Session.get<T>(sid) || new Session(null);
 
-    if (!sid && options?.setCookie) {
+    if ((!sid || sid !== session.id) && options?.setCookie) {
         cookie.set("connection", session.id, { "path": "/" });
     }
 

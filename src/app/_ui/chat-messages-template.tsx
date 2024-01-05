@@ -1,8 +1,5 @@
 'use client';
-import { FullMessageData } from "@/models/connection";
-import sendMessageAction from "../_actions/send-message";
 import ChatMessage from "./chat-message";
-import { useEffect, useState } from "react";
 import socket from "../_api/socket-connection";
 import useMessages from "@/app/_hooks/use-messages";
 

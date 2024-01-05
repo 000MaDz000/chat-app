@@ -40,7 +40,6 @@ rooms.post("/join/:roomname?", async (req, res) => {
         else {
             res.sendStatus(200);
         }
-
     }
     catch (err) {
         res.sendStatus(500);

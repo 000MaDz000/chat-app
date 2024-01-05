@@ -21,7 +21,9 @@ export class Room {
 
 
         const { insertedId } = await rooms.insertOne(data);
+        await new Room(data.roomname).lock(data.password || "");
 
+        delete data.password;
         return {
             _id: insertedId,
             ...data,
@@ -31,7 +33,7 @@ export class Room {
 
     static async autoComplete(searchWord: string) {
         if (!searchWord) {
-            const aggregation = rooms.aggregate([
+            const aggregation = rooms.aggregate<WithId<RoomData>>([
                 { $limit: 25 },
                 {
                     $project: {
@@ -45,17 +47,32 @@ export class Room {
 
         const aggregation = rooms.aggregate([
             {
-                $limit: 25,
-            },
-            {
                 $match: {
                     roomname: new RegExp(searchWord, "i"),
                 }
             },
             {
+                $limit: 25,
+            },
+            {
                 $project: {
                     _id: 1,
                     roomname: 1,
+                    creationDate: 1,
+                }
+            }
+        ]).toArray();
+
+        return await aggregation;
+    }
+
+    static async getRooms() {
+        const aggregation = rooms.aggregate<WithId<RoomData>>([
+            {
+                $project: {
+                    _id: 1,
+                    roomname: 1,
+                    creationDate: 1,
                 }
             }
         ]).toArray();
@@ -68,7 +85,10 @@ export class Room {
         const aggregation = rooms.aggregate<WithId<Omit<Omit<RoomData, "users">, "password">>>([
             {
                 $match: {
-                    users: new ObjectId(userId),
+                    $or: [
+                        { users: new ObjectId(userId) },
+                        { adminId: new ObjectId(userId) }
+                    ]
                 }
             },
             {
@@ -141,6 +161,7 @@ export class Room {
     }
 
     async lock(password: string) {
+        if (!password) return false;
         const { modifiedCount } = await rooms.updateOne({ roomname: this.name }, {
             $set: {
                 password: password,
@@ -187,14 +208,15 @@ export class Room {
     async isUserMember(userId: ObjectId) {
         const cursor = rooms.aggregate([
             {
-                $limit: 1,
-            },
-            {
                 $match: {
                     roomname: this.name,
-                    users: userId,
+                    $or: [
+                        { users: userId },
+                        { adminId: userId }
+                    ]
                 }
             },
+            { $limit: 1 },
             {
                 $project: {
                     users: 0,
@@ -202,7 +224,9 @@ export class Room {
             }
         ]);
 
-        return Boolean(await cursor.next());
+        const data = await cursor.next();
+
+        return Boolean(data);
     }
 
     async getMessages(): Promise<ReturnedMessageData[]> {

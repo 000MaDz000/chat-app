@@ -1,7 +1,7 @@
-export default function Logo() {
+export default function Logo({ className }: { className?: string }) {
     return (
-        <div className="">
-            <h1>MaDz</h1>
+        <div className={className}>
+            <h1>MaDz Para Chat</h1>
         </div>
     )
 }
