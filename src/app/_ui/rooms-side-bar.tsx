@@ -4,6 +4,7 @@ import Modal from "./modal";
 import { Room } from "@/models/room";
 import session, { DefaultSessionData } from "@/utils/session";
 import { ObjectId } from "mongodb";
+import CreateRoomButton from "./create-room-button";
 
 export default async function RoomsSideBar() {
     const sess = session<DefaultSessionData>();
@@ -18,10 +19,7 @@ export default async function RoomsSideBar() {
             <hr />
             <p></p>
 
-            <Link href="/create-room" className="text-white p-2 flex justify-between items-center bg-lime-600 font-bold cursor-pointer rounded-xl">
-                <p>create</p>
-                <p className="text-3xl">+</p>
-            </Link>
+            <CreateRoomButton className="w-full" noDefaultWidth />
 
             <div>
                 {
