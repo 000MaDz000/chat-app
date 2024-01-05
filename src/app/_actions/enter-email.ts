@@ -1,5 +1,4 @@
 'use server';
-import { UserData } from "@/models/connection";
 import User from "@/models/user";
 import session from "@/utils/session";
 import { redirect } from "next/navigation";
