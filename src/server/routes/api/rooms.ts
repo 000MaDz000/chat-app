@@ -29,7 +29,7 @@ rooms.post("/join/:roomname?", async (req, res) => {
         const password = req.query.password;
 
         const room = new Room(roomname as string);
-        const isCorrectPassword = room.isCorrectPassword(password as string)
+        const isCorrectPassword = await room.isCorrectPassword(password as string)
         if (!isCorrectPassword) return res.status(403).send("incorrect password");
 
         const result = room.addUser(new ObjectId(userData?._id));

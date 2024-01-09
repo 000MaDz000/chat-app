@@ -10,7 +10,7 @@ export default async function Rooms({ searchString }: { searchString: string }) 
     return (
         <div className="flex flex-col gap-3 max-h-[50vh] overflow-y-auto">
             {rooms.map(m => {
-                return <RoomComponent room={{ roomname: m.roomname, creationDate: m.creationDate } as WithId<RoomData>} key={m._id} />
+                return <RoomComponent room={{ roomname: m.roomname, creationDate: m.creationDate, locked: Boolean(m.password) } as WithId<RoomData> & { locked?: boolean }} key={m._id} />
             })}
         </div>
     )

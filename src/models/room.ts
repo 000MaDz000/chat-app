@@ -39,6 +39,7 @@ export class Room {
                     $project: {
                         _id: 1,
                         roomname: 1,
+                        password: 1,
                     }
                 }
             ]);
@@ -73,6 +74,7 @@ export class Room {
                     _id: 1,
                     roomname: 1,
                     creationDate: 1,
+                    password: 1,
                 }
             }
         ]).toArray();
@@ -225,6 +227,7 @@ export class Room {
         ]);
 
         const data = await cursor.next();
+
 
         return Boolean(data);
     }
