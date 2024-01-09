@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import isMeMember from "../_actions/is-me-member";
 import { useRouter } from "next/navigation";
 import Modal from "./modal";
+import Link from "next/link";
 export default function RoomComponent({ room }: { room: RoomData & { locked?: boolean } }) {
     const [joined, setJoined] = useState<boolean | undefined>(undefined);
     const [password, setPassword] = useState("");
@@ -75,7 +76,7 @@ export default function RoomComponent({ room }: { room: RoomData & { locked?: bo
 
             <div className="flex items-center">
                 {
-                    joined ? <p className="text-red-600">&#10004;</p>
+                    joined ? <Link className="bg-blue-800 pl-3 pr-3 pt-2 pb-2 text-white rounded-lg animate-pulse" href={"/chat/" + room.roomname}>chat</Link>
                         : <button type={"button"} className="bg-blue-800 pl-3 pr-3 pt-2 pb-2 text-white rounded-lg" onClick={onJoin}>join</button>
                 }
             </div>
