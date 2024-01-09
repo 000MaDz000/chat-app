@@ -2,14 +2,16 @@ import socket from "@/app/_api/socket-connection";
 import { FullMessageData } from "@/models/connection";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-export default function useMessages(roomname: string): [FullMessageData[], Dispatch<SetStateAction<FullMessageData[]>>] {
+export default function useMessages(roomname: string): [FullMessageData[], Dispatch<SetStateAction<FullMessageData[]>>, boolean, Dispatch<SetStateAction<boolean>>] {
     const [messages, setMessages] = useState<FullMessageData[]>([]);
+    const [isPending, setIsPending] = useState(true);
     useEffect(() => {
         fetch(`/api/messages/${roomname}`).then(res => {
             console.log(res);
             return res.json();
         }).then((res) => {
             setMessages(res as FullMessageData[]);
+            setIsPending(false);
         });
     }, []);
 
@@ -26,5 +28,5 @@ export default function useMessages(roomname: string): [FullMessageData[], Dispa
         }
     });
 
-    return [messages, setMessages];
+    return [messages, setMessages, isPending, setIsPending];
 }
