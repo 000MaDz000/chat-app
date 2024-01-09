@@ -5,7 +5,7 @@ import enterEmailAction from "../_actions/enter-email";
 
 export default function () {
     return (
-        <form className={"flex flex-col gap-4 w-1/3 min-w-max bg-slate-500 p-20 rounded-lg shadow-lg"} action={async (fd) => {
+        <form className={"flex flex-col gap-4 w-1/2 min-w-max bg-slate-500 p-20 rounded-lg shadow-lg"} action={async (fd) => {
             const x = await enterEmailAction(fd);
 
         }}>

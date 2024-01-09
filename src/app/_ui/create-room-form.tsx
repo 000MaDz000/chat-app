@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import createRoom from "../_actions/create-room"
+import { redirect } from "next/navigation";
 
 export default function CreateRoomForm() {
     const [error, setError] = useState("");
@@ -10,12 +11,13 @@ export default function CreateRoomForm() {
 
     const oncreate = async (formdata: FormData) => {
         const response = await createRoom(formdata);
-        if (!response.ok) setError(response.message);
+        if (!response.ok) return setError(response.message as string);
+        redirect("/chat/" + formdata.get("roomname"));
     }
 
     return (
         <form action={oncreate} className="flex flex-col gap-3 p-4">
-            {error ? <p className="text-red-600 animate-bounce">{error}</p> : ""}
+            {error ? <p className="text-red-600 animate-bounce">{error}</p> : <p className="text-fuchsia-700 font-semibold">Create a new room</p>}
             <input onChange={() => onWriteRoomName()} type="text" name="roomname" autoComplete="roomname" placeholder="room name" className="p-3 outline-none bg-slate-100 focus:bg-slate-200 rounded-sm transition-colors" />
             <input type="password" name="password" autoComplete="roompassword" placeholder="room password (optional)" className="p-3 outline-none bg-slate-100 focus:bg-slate-200 rounded-sm transition-colors" />
             <input value={"create"} type="submit" className="p-2 w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 text-white font-bold cursor-pointer rounded-md" />
