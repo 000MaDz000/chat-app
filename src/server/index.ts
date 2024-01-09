@@ -74,9 +74,13 @@ socketServer.on("connection", async (socket) => {
             "senderId": new ObjectId(socket.data.session.data.user._id),
         }
 
+        // database
+        const sendedMessage = await room.sendMessage(messageData);
+        if (sendedMessage instanceof Error) return;
 
         // realtime
         socketServer.to(roomObj._id.toString()).emit("message", {
+            _id: sendedMessage._id,
             body: messageData.body,
             creationDate: messageData.creationDate,
             sender: {
@@ -85,7 +89,5 @@ socketServer.on("connection", async (socket) => {
             roomname,
         });
 
-        // database
-        await room.sendMessage(messageData);
     });
 });
