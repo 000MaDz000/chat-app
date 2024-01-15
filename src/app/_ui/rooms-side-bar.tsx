@@ -1,6 +1,5 @@
 import Link from "next/link";
 import RoomLink from "./room-link";
-import Modal from "./modal";
 import { Room } from "@/models/room";
 import session, { DefaultSessionData } from "@/utils/session";
 import { ObjectId } from "mongodb";
@@ -23,7 +22,9 @@ export default async function RoomsSideBar() {
 
             <div className="flex flex-col gap-2">
                 {
-                    userRooms.map(r => <RoomLink roomName={r.roomname} key={r._id.toString()} />)
+                    userRooms.map(r => {
+                        return <RoomLink roomName={r.roomname} key={r._id.toString()} isAdmin={r.adminId && id && r.adminId.toString() === id.toString()} />;
+                    })
                 }
 
             </div>
