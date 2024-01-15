@@ -23,12 +23,12 @@ export default function ChatMessagesTemplate({ roomname, userData }: { roomname:
 
     return (
         <div className="w-full flex flex-col bg-gray-100 grow">
-            <div className="grow flex flex-col h-full scroll-p-1" ref={messagesContainer}>
+            <div className={"grow flex flex-col h-full scroll-p-1" + (!isPending && !messages.length ? " items-center justify-center" : "")} ref={messagesContainer}>
                 {
                     messages.length ?
                         messages.map((m) => <ChatMessage message={m.body} publisher={m.sender} isCurrentUser={m.sender.nickname === userData.nickname} key={m._id} />) :
                         isPending ? "" :
-                            <div className="absolute top-[50%] left-[50%] font-semibold text-lg text-emerald-700 animate-pulse">
+                            <div className="font-semibold text-lg text-emerald-700">
                                 <p>This chat room has not messages yet!</p>
                             </div>
                 }
