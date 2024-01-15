@@ -1,10 +1,13 @@
-import { UserData } from "@/models/connection";
 import { users } from "./connection";
-import { WithId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import sendMail from "../utils/send-mail";
 
 const allowedCharacters = "a1b0c2d3e4f5g6h7i8j9kmnopqrstuvwxyz"
 export default class User {
+    static async getUserObjectWithId(id: ObjectId) {
+        return await users.findOne({ _id: id });
+    }
+
     constructor(public email: string) {
         this.build();
     }

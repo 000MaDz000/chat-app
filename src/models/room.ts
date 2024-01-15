@@ -131,8 +131,26 @@ export class Room {
 
     }
 
-    async *getUsers() {
-
+    async getUsersIds(): Promise<ObjectId[]> {
+        const cursor = rooms.aggregate([
+            {
+                $match: {
+                    roomname: this.name
+                }
+            },
+            {
+                $project: {
+                    adminId: 1,
+                    users: 1,
+                }
+            }
+        ]);
+        const value = await cursor.next();
+        if (!value) return [];
+        return [
+            value.adminId as ObjectId,
+            ...value.users,
+        ];
     }
 
 
