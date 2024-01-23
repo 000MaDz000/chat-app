@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 import { usePathname } from "next/navigation"
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Modal from "./modal";
 import RoomOptions from "./room-options";
 export default function RoomLink({ roomName, isAdmin }: { roomName: string, isAdmin?: boolean }) {
@@ -22,9 +22,11 @@ export default function RoomLink({ roomName, isAdmin }: { roomName: string, isAd
 
             {
                 isOptionsActive && (
-                    <Modal onOut={() => setIsOptionsActive(false)}>
+                    <Modal onOut={() => isOptionsActive ? setIsOptionsActive(false) : ""}>
+                        {/* <Suspense fallback={<h1>Loading ....</h1>}> */}
                         {/* <button className="w-1/2 bg-red-700 text-white font-bold rounded-lg pt-1 pb-1 cursor-pointer">Leave Room</button> */}
-                        <RoomOptions />
+                        <RoomOptions roomname={roomName} />
+                        {/* </Suspense> */}
                     </Modal>
                 )
             }
