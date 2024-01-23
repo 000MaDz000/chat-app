@@ -4,12 +4,11 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import api from "./routes/api";
-import getSessionData, { SessionObj } from "../utils/get-session-data";
+import getSessionData from "../utils/get-session-data";
 import { DefaultSessionData } from "../utils/session";
 import { Room } from "../models/room";
 import { ObjectId } from "mongodb";
 import { MessageData } from "@/models/connection";
-import User from "@/models/user";
 
 const dev = process.env.NODE_ENV !== "production";
 const port = (process.env.PORT as number | undefined) || 3000;

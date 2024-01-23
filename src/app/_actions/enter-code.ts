@@ -25,10 +25,7 @@ export default async function enterCodeAction(formData: FormData) {
         sess.save();
         console.log("code is true");
         redirect("/chat");
-    } else {
-        console.log(sess.data);
-        console.log("code is:", code);
-        console.log("expected:", userCode);
-
     }
+
+    return "the code is wrong";
 }
