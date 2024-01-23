@@ -147,6 +147,7 @@ export class Room {
         ]);
         const value = await cursor.next();
         if (!value) return [];
+        if (!value.users) value.users = [];
         return [
             value.adminId as ObjectId,
             ...value.users,

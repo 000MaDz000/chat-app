@@ -1,3 +1,4 @@
+
 declare namespace Express {
     // Inject additional properties on express.Request
     interface Request {
@@ -19,7 +20,7 @@ declare interface UserData {
 }
 
 declare type SocketData = {
-    session: SessionObj;
+    session: DefaultSessionData;
     cookies: {
         connection?: string;
     }

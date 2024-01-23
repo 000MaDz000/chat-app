@@ -63,31 +63,41 @@ socketServer.use(async (socket, next) => {
 
 socketServer.on("connection", async (socket) => {
     socket.on("message", async (roomname: string, message: string) => {
-        const room = new Room(roomname);
-        const roomObj = await room.getRoomDocument();
-        if (!roomObj || !socket.rooms.has(roomObj._id.toString())) return;
+        try {
 
-        const messageData: MessageData = {
-            "body": message,
-            "creationDate": new Date(),
-            "roomId": roomObj._id,
-            "senderId": new ObjectId(socket.data.session.data.user._id),
+            const room = new Room(roomname);
+            const roomObj = await room.getRoomDocument();
+            if (!roomObj || !socket.rooms.has(roomObj._id.toString())) return;
+
+            const sess = socket.data.session as { id: string, data: DefaultSessionData };
+            // console.log(sess)
+            if (!sess.data.authunticated || !(await room.isUserMember(new ObjectId(sess.data.user._id)))) return;
+
+            const messageData: MessageData = {
+                "body": message,
+                "creationDate": new Date(),
+                "roomId": roomObj._id,
+                "senderId": new ObjectId(socket.data.session.data.user._id),
+            }
+
+            // database
+            const sendedMessage = await room.sendMessage(messageData);
+            if (sendedMessage instanceof Error) return;
+
+            // realtime
+            socketServer.to(roomObj._id.toString()).emit("message", {
+                _id: sendedMessage._id,
+                body: messageData.body,
+                creationDate: messageData.creationDate,
+                sender: {
+                    nickname: socket.data.session.data.user.nickname,
+                },
+                roomname,
+            });
         }
-
-        // database
-        const sendedMessage = await room.sendMessage(messageData);
-        if (sendedMessage instanceof Error) return;
-
-        // realtime
-        socketServer.to(roomObj._id.toString()).emit("message", {
-            _id: sendedMessage._id,
-            body: messageData.body,
-            creationDate: messageData.creationDate,
-            sender: {
-                nickname: socket.data.session.data.user.nickname,
-            },
-            roomname,
-        });
+        catch (err) {
+            return;
+        }
 
     });
 });

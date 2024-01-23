@@ -8,6 +8,10 @@ export default class User {
         return await users.findOne({ _id: id });
     }
 
+    static async getUserObjectWithNickname(nickname: string) {
+        return await users.findOne({ nickname });
+    }
+
     constructor(public email: string) {
         this.build();
     }
