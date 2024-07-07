@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+# add MAIL_USER in .env file
+# add MAIL_PASS in .env file
+# the website now is using only Outlook accounts
 First, run the development server:
 
 ```bash

@@ -38,7 +38,7 @@ socketServer.use(async (socket, next) => {
     const parsed: { [key: string]: string } = {};
     splited.map((cookie, i) => {
         const [key, value] = cookie.split("=");
-        parsed[key] = value;
+        parsed[key.trim()] = value;
     });
 
     socket.data.cookies = parsed;
@@ -63,7 +63,7 @@ socketServer.use(async (socket, next) => {
 socketServer.on("connection", async (socket) => {
     socket.on("message", async (roomname: string, message: string) => {
         try {
-
+            roomname = roomname.replaceAll("%20", " ");
             const room = new Room(roomname);
             const roomObj = await room.getRoomDocument();
             if (!roomObj || !socket.rooms.has(roomObj._id.toString())) return;

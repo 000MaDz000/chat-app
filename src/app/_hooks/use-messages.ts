@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 export default function useMessages(roomname: string): [FullMessageData[], Dispatch<SetStateAction<FullMessageData[]>>, boolean, Dispatch<SetStateAction<boolean>>] {
     const [messages, setMessages] = useState<FullMessageData[]>([]);
     const [isPending, setIsPending] = useState(true);
+    roomname = roomname.replaceAll("%20", " ");
     useEffect(() => {
         fetch(`/api/messages/${roomname}`).then(res => {
             console.log(res);
